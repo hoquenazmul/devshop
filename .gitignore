@@ -38,6 +38,7 @@ develop-eggs/
 dist/
 downloads/
 playground/
+migrations/
 eggs/
 lib/
 lib64/
