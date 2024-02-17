@@ -1,11 +1,6 @@
 from django.db import models
 
 
-class Promotion(models.Model):
-    description = models.CharField(max_length=255)
-    discount = models.FloatField()
-
-
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = 'B'
     MEMBERSHIP_SILVER = 'S'
@@ -37,6 +32,11 @@ class Collection(models.Model):
     title = models.CharField(max_length=255)
     # Circular Relationship
     feature_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
+    
+
+class Promotion(models.Model):
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
 
 
 class Product(models.Model):
