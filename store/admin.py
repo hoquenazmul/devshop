@@ -3,6 +3,9 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.db.models import Count
 from django.http import HttpRequest
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.http import urlencode
 from . import models
 
 
@@ -10,10 +13,16 @@ from . import models
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ['title', 'products_count']
     
-    # since collection object doesn't field like 'products_count', so we can have this value by following computed value approach
+    # since collection object doesn't have field like 'products_count', so we can have this value by following computed field approach
     @admin.display(ordering='products_count')
     def products_count(self, collection):
-        return collection.products_count
+        # example_url = reverse('admin:app_target-model_target-page')
+        url = (reverse('admin:store_product_changelist') 
+               + '?'
+               + urlencode({
+                   'collection__id': str(collection.id)
+               }))
+        return format_html('<a href="{}">{}</a>', url, collection.products_count)
     
     # Override the base queryset to show products_count
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
