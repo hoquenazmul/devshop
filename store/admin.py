@@ -1,5 +1,25 @@
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.db.models import Count
+from django.http import HttpRequest
 from . import models
+
+
+@admin.register(models.Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    list_display = ['title', 'products_count']
+    
+    # since collection object doesn't field like 'products_count', so we can have this value by following computed value approach
+    @admin.display(ordering='products_count')
+    def products_count(self, collection):
+        return collection.products_count
+    
+    # Override the base queryset to show products_count
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        return super().get_queryset(request).annotate(
+            products_count=Count('product')
+        )
 
 
 @admin.register(models.Product)
@@ -9,6 +29,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 10
     list_select_related = ['collection']
     
+    # Display related object field
     def collection_title(self, product):
         return product.collection.title
     
@@ -33,6 +54,3 @@ class CustomerAdmin(admin.ModelAdmin):
     ordering = ['first_name', 'last_name']
     list_per_page = 10
     
-
-# Register your models here.
-admin.site.register(models.Collection)
