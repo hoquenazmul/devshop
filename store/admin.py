@@ -29,6 +29,7 @@ class InventoryFilter(admin.SimpleListFilter):
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ['title', 'products_count']
+    search_fields = ['title']
     
     # since collection object doesn't have field like 'products_count', so we can have this value by following computed field approach
     @admin.display(ordering='products_count')
@@ -50,6 +51,12 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    # fields = ['title', 'slug'] => show title, slug input fields to add/update
+    # exclude = ['promotions'] => except promotions, all the product fields should be displayed to add/update
+    autocomplete_fields = ['collection']
+    prepopulated_fields = {
+        'slug': ['title']
+    }
     actions = ['clear_inventory']
     list_display = ['title', 'unit_price', 'inventory_status', 'collection_title']
     list_editable = ['unit_price']
@@ -81,6 +88,7 @@ class ProductAdmin(admin.ModelAdmin):
     
 @admin.register(models.Order)   
 class OrderAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['customer']
     list_display = ['id', 'placed_at', 'payment_status', 'customer']
     list_per_page = 10
     
