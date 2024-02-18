@@ -63,6 +63,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['collection', 'last_update', InventoryFilter]
     list_per_page = 10
     list_select_related = ['collection']
+    search_fields = ['title']
     
     # Display related object field
     def collection_title(self, product):
@@ -84,11 +85,20 @@ class ProductAdmin(admin.ModelAdmin):
             f'{updated_count} products were successfully updated!',
             messages.SUCCESS
         )
+        
+        
+class OrderItemInline(admin.TabularInline):
+    autocomplete_fields = ['product']
+    model = models.OrderItem
+    min_num = 1
+    max_num = 10
+    extra = 0 # to avoid extra 3 placeholder
 
     
 @admin.register(models.Order)   
 class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['customer']
+    inlines = [OrderItemInline]
     list_display = ['id', 'placed_at', 'payment_status', 'customer']
     list_per_page = 10
     
