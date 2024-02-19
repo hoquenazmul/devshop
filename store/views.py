@@ -8,7 +8,9 @@ from .serializers import ProductSerializer
 
 @api_view()
 def product_list(request):
-    return Response('ok')
+    queryset = Product.objects.all()
+    serializer = ProductSerializer(queryset, many=True) # pass queryset/object & set `many=True` if there's multiple object`
+    return Response(serializer.data)
 
 
 @api_view()
