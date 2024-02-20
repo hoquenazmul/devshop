@@ -44,7 +44,7 @@ def product_detail(request, id):
 @api_view(['GET', 'POST'])
 def colloection_list(request):
     if request.method == 'GET':
-        queryset = Collection.objects.annotate(products_count=Count('product__id')).all()
+        queryset = Collection.objects.annotate(products_count=Count('products')).all()
         serializer = CollectionSerializer(queryset, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
@@ -57,7 +57,7 @@ def colloection_list(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def colloection_detail(request, pk):
     collection = get_object_or_404(
-        Collection.objects.annotate(products_count=Count('product')), pk=pk)
+        Collection.objects.annotate(products_count=Count('products')), pk=pk)
     
     if request.method == 'GET':
         serializer = CollectionSerializer(collection)
@@ -68,7 +68,7 @@ def colloection_detail(request, pk):
         serializer.save()
         return Response(serializer.data)
     if request.method == 'DELETE':
-        if collection.product_set.count() > 0:
+        if collection.products.count() > 0:
             return Response({'error': 'Collection cannot be deleted because it has one or more products'}, 
                             status=status.HTTP_405_METHOD_NOT_ALLOWED)
         collection.delete()
