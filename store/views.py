@@ -11,6 +11,7 @@ from .models import Product, Collection, OrderItem, Review, Cart, CartItem, Cust
 from .serializers import ProductSerializer, CollectionSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer
 from .filters import ProductFilter
 from .pagination import DefaultPagination
+from .permissions import IsAdminOrReadOnly
 
 
 class ProductViewSet(ModelViewSet):
@@ -19,6 +20,7 @@ class ProductViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     pagination_class = DefaultPagination
+    permission_classes = [IsAdminOrReadOnly]
     search_fields = ['title', 'description']
     ordering_fields = ['unit_price', 'last_update']
     
@@ -32,6 +34,7 @@ class ProductViewSet(ModelViewSet):
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(products_count=Count('products')).all()
     serializer_class = CollectionSerializer
+    permission_classes = [IsAdminOrReadOnly]
     
     def destroy(self, request, *args, **kwargs):
         if Product.objects.filter(collection__id=kwargs['pk']).count() > 0:
