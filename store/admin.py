@@ -49,6 +49,16 @@ class CollectionAdmin(admin.ModelAdmin):
         )
 
 
+class ProductImageInline(admin.TabularInline):
+    model = models.ProductImage
+    readonly_fields = ['thumbnail']
+    
+    def thumbnail(self, instance):
+        if instance.image.name != '':
+            return format_html(f'<img src="{instance.image.url}" class="thumbnail">')
+        return ''
+
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     # fields = ['title', 'slug'] => show title, slug input fields to add/update
@@ -58,6 +68,7 @@ class ProductAdmin(admin.ModelAdmin):
         'slug': ['title']
     }
     actions = ['clear_inventory']
+    inlines = [ProductImageInline]
     list_display = ['title', 'unit_price', 'inventory_status', 'collection_title']
     list_editable = ['unit_price']
     list_filter = ['collection', 'last_update', InventoryFilter]
@@ -85,6 +96,11 @@ class ProductAdmin(admin.ModelAdmin):
             f'{updated_count} products were successfully updated!',
             messages.SUCCESS
         )
+        
+    class Media:
+        css = {
+            'all': ['styles.css']
+        }     
         
         
 class OrderItemInline(admin.TabularInline):
