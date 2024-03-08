@@ -17,6 +17,8 @@ django-cors-headers = "*"
 django-templated-mail = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-django = "*"
 
 [requires]
 python_version = "3.8"
