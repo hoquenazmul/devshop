@@ -16,6 +16,7 @@ pillow = "*"
 django-cors-headers = "*"
 django-templated-mail = "*"
 django-redis = "*"
+whitenoise = "*"
 
 [dev-packages]
 pytest = "*"
